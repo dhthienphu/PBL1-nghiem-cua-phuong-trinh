@@ -92,7 +92,7 @@ void replace_multi(float matrix[1000][1000], int n, int *p, int *q)
         a = *p - 1;
         b = *q - 1;
         if (a < 0 || a > n - 1 || b < 0 || b > n - 1)
-            printf("Co cot khong ton tai yeu cau nhap lai: \n");
+            printf("Co cot khong ton tai yeu cau nhap lai. \n\n");
         else
             break;
     } while (1);
@@ -179,10 +179,10 @@ void rewriteFileName(char *fileName, FILE *file, int cnt, float matrix[1000][100
             {
                 if (file == NULL)
                 {
-                    printf("File: %s khong ton tai, vui long nhap lai.\n", fileName);
+                    printf("File: %s khong ton tai, vui long nhap lai.\n\n", fileName);
                 }
                 else
-                    printf("Loi du lieu trong file\n Moi ban nhap lai\n");
+                    printf("Loi du lieu trong file\n Moi ban nhap lai\n\n");
                 // readNameFile(fileName, cnt);
             }
             else
@@ -196,7 +196,7 @@ void rewriteFileName(char *fileName, FILE *file, int cnt, float matrix[1000][100
         // }
         //     else
         //       {
-        printf("Nhap file: %s thanh cong.\n", fileName);
+        printf("Nhap file: %s thanh cong.\n\n", fileName);
         //        }
     } while (check == 0);
 }
