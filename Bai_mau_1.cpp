@@ -164,7 +164,7 @@ void readNameFile(char *fileName, int cnt)
     {
         fileName[length - 1] = '\0';
     }
-}
+}//hello
 void rewriteFileName(char *fileName, FILE *file, int cnt, float matrix[1000][1000], int *n, int check)
 {
     do
