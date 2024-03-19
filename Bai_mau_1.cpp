@@ -17,7 +17,6 @@ void printMatrixToFile(FILE *file, float matrix[1000][1000], int n);
 void readNameFile(char *fileName, int cnt);
 void rewriteFileName(char *fileName, FILE *file, int cnt, float matrix[1000][1000], int *n, int check);
 void printResultToFile(FILE *file, char *fileName, int n);
-void READ_FROM_FILE(char *fileName1, char *fileName2, FILE *file1, FILE *file2, float matrixA[][1000], float matrixB[][1000], int *n, int check1, int check2);
 void printMatrixSumAndMulti(float matrixA[][1000], float matrixB[][1000], int n);
 
 int main()
@@ -221,26 +220,6 @@ void printResultToFile(FILE *file, char *fileName, int n)
     fprintf(file, "Ket qua sau khi hoan doi cot %d và %d la:\n ", p, q);
     printMatrixToFile(file, matrixAns_multi, n);
     fclose(file);
-}
-void READ_FROM_FILE(char *fileName1, char *fileName2, FILE *file1, FILE *file2, float matrixA[][1000], float matrixB[][1000], int *n, int check1, int check2)
-{
-    int num_1, num_2;
-    int num_tmp1, num_tmp2;
-    do
-    {
-        rewriteFileName(fileName1, file1, 1, matrixA, &num_1, check1);
-        rewriteFileName(fileName2, file2, 2, matrixB, &num_2, check2);
-
-        if (num_1 != num_2)
-        {
-            printf("2 ma tran khong cung cap, yeu cau nhap lai file \n");
-        }
-        else
-        {
-
-            *n = num_1;
-        }
-    } while (num_1 != num_2);
 }
 void printMatrixSumAndMulti(float matrixA[][1000], float matrixB[][1000], int n)
 {
