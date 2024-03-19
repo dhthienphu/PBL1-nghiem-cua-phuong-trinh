@@ -37,7 +37,6 @@ int main()
             n = num_1;
         }
     } while (num_1 != num_2);
-    // READ_FROM_FILE(fileName1,fileName2,file1,file2,matrixA,matrixB,&n,check1,check2); //nhieu tham so tach ra nhu cu
     sumAndmulti(matrixA, matrixB, n);
     printMatrixSumAndMulti(matrixAns_sum, matrixAns_multi, n);
     printResultToFile(file3, fileName3, n);
