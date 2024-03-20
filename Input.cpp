@@ -9,7 +9,8 @@ int Find(char *temp, char x)
 }
 struct element
 {
-    char *String;
+    char string_num[100];
+    char string_bac[100];
     int sign; // =0 la + , =1 la -
     int id_var;
     int id_sign;
@@ -42,7 +43,7 @@ int main()
     int j = 0;
     while (temp != NULL)
     {
-        strcpy(temp, ele[j].String);
+
         if (Find(temp, '-'))
         {
             ele[j].sign = -1;
@@ -55,12 +56,30 @@ int main()
         {
             if (Find(temp, 'x'))
             {
-                for (int i = Find_id(temp, 'x'); i >= 0; i--)
+                for (int i = 0; i < Find_id(temp, 'x'); i++)
                 {
-                                }
+                    // if (ele[j].sign == -1)
+                    // {
+                    //     if (i == 0)
+                    //         continue;
+                    // }
+                    ele[j].string_num[i] = expression[i];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < strlen(temp); i++)
+                {
+                    // if (ele[j].sign == -1)
+                    // {
+                    //     if (i == 0)
+                    //         continue;
+                    // }
+                    ele[j].string_num[i] = expression[i];
+                }
             }
         }
-
+        printf("%s ", ele[0].string_num);
         temp = strtok(NULL, " "); // Lấy phần tử tiếp theo
     }
     // Dem so luong element nhap vao.
