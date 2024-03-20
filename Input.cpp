@@ -85,16 +85,29 @@ int main()
     //
     struct element ele[element_count];
     // lay dau + or - va index
-    int j = 0;
+    int j = 1;
     for (int i = 0; i < length; i++)
     {
         // xu ly xong phan dau
         if (name[0] != '-')
         {
-            ele[0].dau = 0
+            ele[0].dau = 0;
+            ele[0].id_dau = -1;
         }
         else
+        {
             ele[0].dau = 1;
+            ele[0].id_dau = -1;
+        }
+        // xu ly phan sau
+        if (name[i] == '+' || name[i] == '-')
+        {
+            if (name[i] == '+')
+            {
+                ele[j].dau = 0;
+                ele[j++].id_dau = i;
+            }
+        }
     }
 
     // tao mang luu chi so ki tu + decode 0 and 1 then *decimalnumber gan lai cho bien
@@ -108,5 +121,4 @@ int main()
                 id_dau[j++] = i;
         }
     }
-    int
 }
