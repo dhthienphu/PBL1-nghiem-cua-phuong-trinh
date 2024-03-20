@@ -216,7 +216,7 @@ void printResultToFile(FILE *file, char *fileName, int n)
     replace_multi(matrixAns_multi, n, &p, &q);
     out(matrixAns_multi, n);
     printf("Ket qua da duoc luu o %s.", fileName);
-    fprintf(file, "Ket qua sau khi hoan doi cot %d v√† %d la:\n ", p, q);
+    fprintf(file, "Ket qua sau khi hoan doi cot %d v‡ %d la:\n ", p, q);
     printMatrixToFile(file, matrixAns_multi, n);
     fclose(file);
 }
