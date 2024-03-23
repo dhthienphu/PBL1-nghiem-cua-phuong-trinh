@@ -71,15 +71,18 @@ float bisectionMethod(float *a, float *res, float *b)
 {
     float tmp;
     float c;
-    if (*res == *a)
+    while (f(*a) * f(*b) == 0)
     {
-        printf("%f is solution of equation\n", *a);
-        return 0;
-    }
-    if (*res == *b)
-    {
-        printf("%f is solution of equation\n", *b);
-        return 0;
+        if (*res == *a)
+        {
+            printf("%f is solution of equation\n", *a);
+            return 0;
+        }
+        if (*res == *b)
+        {
+            printf("%f is solution of equation\n", *b);
+            return 0;
+        }
     }
     if (*a > *b)
     {
@@ -88,12 +91,12 @@ float bisectionMethod(float *a, float *res, float *b)
         *b = tmp;
     }
     printf("----------Table of solution by bisection method----------\n");
-    printf(" a         |        b        |       c        |  f(c)      \n");
+    printf(" a              |        b           |       c           |  f(c)          \n");
 
-    while (1)
+    while (f(*a) < 0 && f(*b) > 0)
     {
         c = (*a + *b) / 2;
-        printf(" %0.6f     |     %0.6f       |    %0.6f       |   %0.6f    \n ", *a, *b, c, f(c));
+        printf(" %0.6f   |     %0.6f       |    %0.6f       |   %0.6f    \n ", *a, *b, c, f(c));
         if (f(c) > 0)
         {
             *b = c;
@@ -101,6 +104,27 @@ float bisectionMethod(float *a, float *res, float *b)
         else
             *a = c;
         if (fabs(*a - *b) <= e)
+        {
+            printf("-----The solution of the equation is %0.6f\n", *a);
+            return 0;
+        }
+    }
+    while (f(*a) > 0 && f(*b) < 0)
+    {
+        c = (*a + *b) / 2;
+        printf(" %0.6f     |     %0.6f       |    %0.6f       |   %0.6f    \n ", *a, *b, c, f(c));
+        if (f(c) < 0)
+        {
+            *b = c;
+        }
+        else
+            *a = c;
+        if (f(c) == 0)
+        {
+            printf("-----The solution of the equation is %0.6f\n", c);
+            return 0;
+        }
+        if ((fabs(*a - *b) <= e) && f(c) != 0)
         {
             printf("-----The solution of the equation is %0.6f\n", *a);
             return 0;
