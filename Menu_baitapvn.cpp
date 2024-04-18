@@ -52,7 +52,6 @@ int main()
 
     strftime(time_str, sizeof(time_str), "%I:%M %p", localtime(&current_time));
 
-label_main:;
     MENU_MAIN();
     choice_main = Input_Choice(6, notice_main, 0);
     switch (choice_main)
@@ -88,36 +87,36 @@ label_main:;
             if (choice_1_1 == 'r')
             {
                 system("cls");
-                goto label_main;
+                break;
             }
             else
             {
                 system("cls");
-                goto label_exit;
+                return 0;
             }
             break;
-        case '2':
-            // input from keyboard
-            InputData_keyboard(matrixA, matrixB, &n);
-            isHavingData = 1;
-            printf("%s Message  --- Input Data successfully....\n", time_str);
-            char choice_1_1 = Input_Choice(0, notice_er, 1);
-            // return dashboard or exit program.
-            if (choice_1_1 == 'r')
-            {
-                system("cls");
-                goto label_main;
-            }
-            else
-            {
-                system("cls");
-                goto label_exit;
-            }
-            break;
-        case 'r':
-            goto label_main;
-            break;
+            // case '2':
+            //     // input from keyboard
+            //     InputData_keyboard(matrixA, matrixB, &n);
+            //     isHavingData = 1;
+            //     printf("%s Message  --- Input Data successfully....\n", time_str);
+            //     char choice_1_2 = Input_Choice(0, notice_er, 1);
+            //     // return dashboard or exit program.
+            //     if (choice_1_2 == 'r')
+            //     {
+            //         system("cls");
+            //         break;
+            //     }
+            //     else
+            //     {
+            //         system("cls");
+            //         return 0;
+            //     }
+            //     break;
+            // case 'r':
+            //     break;
         }
+
         break;
     //-->input1<--
     //-->input2<--
@@ -130,7 +129,7 @@ label_main:;
             if (choice_2 == 'r')
             {
                 system("cls");
-                goto label_main;
+                break;
             }
         }
         else
@@ -142,12 +141,12 @@ label_main:;
             if (choice_2 == 'r')
             {
                 system("cls");
-                goto label_main;
+                break;
             }
             else
             {
                 system("cls");
-                goto label_exit;
+                return 0;
             }
             break;
         }
@@ -155,8 +154,6 @@ label_main:;
         break;
         //-->input2<--
     }
-
-label_exit:;
 }
 
 // chinh lai ham input choice: them nhap r de return va nhap e de ket thuc...
@@ -166,7 +163,7 @@ char Input_Choice(int n, char *notice, int control)
     if (control == 1)
     {
         printf("--Press \"r\" to return the main menu....\n");
-        printf("--Press \"e\" to close program...");
+        printf("--Press \"e\" to close program...\n");
     }
     int c, d, check = 0;
     do
