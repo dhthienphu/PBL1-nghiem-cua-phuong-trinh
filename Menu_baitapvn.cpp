@@ -5,16 +5,17 @@
 #include <windows.h>
 #include <time.h>
 
+// chinh lai cai ham print ra qua lo
 float matrixAns_sum[100][100];
 float matrixAns_multi[100][100];
 float matrixA[100][100];
 float matrixB[100][100];
 
-char *notice_main = "Please input again, your input doesn't match the menu............";
-char *notice_1 = "Please input again, you can choose 1 or 2 to continue...... ";
-char *notice_2345 = "Don't have a DATA, please choose 1 to input data ......... ";
-char *notice_6 = "Don't have a DATA to print, please choose 1 to input data....... ";
-char *notice_er = "Please input again, you can choose \"r\" or \"e\" to continue.....";
+char notice_main[] = "Please input again, your input doesn't match the menu............";
+char notice_1[] = "Please input again, you can choose 1 or 2 to continue...... ";
+char notice_2345[] = "Don't have a DATA, please choose 1 to input data ......... ";
+char notice_6[] = "Don't have a DATA to print, please choose 1 to input data....... ";
+char notice_er[] = "Please input again, you can choose \"r\" or \"e\" to continue.....";
 char time_str[12];
 
 char Input_Choice(int n, char *notice, int control);
@@ -26,10 +27,12 @@ void MENU_3();
 void print_result_multi(int n);
 void InputData_keyboard(float matrixA[][100], float matrixB[][100], int *n);
 void gotoxy(int x, int y);
+void out_console(float matrix[100][100], char name[], int n, int x, int y);
 
 int checkData(FILE *file, float matrixA[100][100], int *n, int *check);
 void out(float matrix[100][100], int n);
-void sumAndmulti(float matrixA[100][100], float matrixB[100][100], int n);
+void Matrix_sum(float matrixA[100][100], float matrixB[100][100], int n);
+void Matrix_multi(float matrixA[100][100], float matrixB[100][100], int n);
 void Swap(float *a, float *b);
 void replace_multi(float matrix[100][100], int n, int *p, int *q);
 void readMatrixFromFile(FILE *file, float matrixA[100][100], int *n, int *check);
@@ -44,16 +47,26 @@ int main()
 {
     char fileName1[100], fileName2[100], fileName3[100];
     int n, p, q, num_1, num_2, check1 = 1, check2 = 1;
-    char choice_main, choice_1;
+    char choice_main, choice_1, choice_1_1, choice_1_2, choice_2, choice_3;
     int isHavingData = 0;
+    int checkLabel_main = 0;
     FILE *file1, *file2, *file3;
     // Lấy thời gian hiện tại
     time_t current_time = time(NULL);
 
     strftime(time_str, sizeof(time_str), "%I:%M %p", localtime(&current_time));
 
+label_main:;
+    if (checkLabel_main == 1)
+    {
+
+        getchar();
+        checkLabel_main = 0;
+    }
+
     MENU_MAIN();
     choice_main = Input_Choice(6, notice_main, 0);
+    getchar();
     switch (choice_main)
     {
         //-->input1<--
@@ -61,6 +74,8 @@ int main()
         system("cls");
         MENU_1();
         choice_1 = Input_Choice(2, notice_1, 1);
+        getchar();
+
         switch (choice_1)
         {
         case '1':
@@ -71,7 +86,7 @@ int main()
                 rewriteFileName(fileName2, file2, 2, matrixB, &num_2, check2);
                 if (num_1 != num_2)
                 {
-                    printf("2 ma tran khong cung cap, yeu cau nhap lai file \n");
+                    printf("%s -Message- The 2 matrices are not at the same level, please re-entering the file name \n\n", time_str);
                 }
                 else
                 {
@@ -79,42 +94,51 @@ int main()
                 }
             } while (num_1 != num_2);
             isHavingData = 1;
-            printf("%s --- Message  --- Input Data successfully....\n", time_str);
+            printf("%s -Message- Input Data successfully....\n\n", time_str);
             // input choice for r or e
-            char choice_1_1 = Input_Choice(0, notice_er, 1);
+            choice_1_1 = Input_Choice(0, notice_er, 1);
             // return dashboard or exit program.
-
+            getchar();
             if (choice_1_1 == 'r')
             {
                 system("cls");
+                checkLabel_main = 0;
+                goto label_main;
                 break;
             }
             else
             {
                 system("cls");
+                goto label_exit;
                 return 0;
             }
             break;
-            // case '2':
-            //     // input from keyboard
-            //     InputData_keyboard(matrixA, matrixB, &n);
-            //     isHavingData = 1;
-            //     printf("%s Message  --- Input Data successfully....\n", time_str);
-            //     char choice_1_2 = Input_Choice(0, notice_er, 1);
-            //     // return dashboard or exit program.
-            //     if (choice_1_2 == 'r')
-            //     {
-            //         system("cls");
-            //         break;
-            //     }
-            //     else
-            //     {
-            //         system("cls");
-            //         return 0;
-            //     }
-            //     break;
-            // case 'r':
-            //     break;
+        case '2':
+            // input from keyboard
+            InputData_keyboard(matrixA, matrixB, &n);
+            isHavingData = 1;
+            printf("%s -Message- Input Data successfully....\n\n", time_str);
+            choice_1_2 = Input_Choice(0, notice_er, 1);
+            // return dashboard or exit program.
+            if (choice_1_2 == 'r')
+            {
+                system("cls");
+                checkLabel_main = 1;
+                goto label_main;
+                break;
+            }
+            else
+            {
+                system("cls");
+                goto label_exit;
+                return 0;
+            }
+            break;
+        case 'r':
+            system("cls");
+            checkLabel_main = 0;
+            goto label_main;
+            break;
         }
 
         break;
@@ -124,11 +148,13 @@ int main()
         system("cls");
         if (isHavingData == 0)
         {
-            printf("%s --- Message --- Don't have a DATA, please press \"r\" to return menu main then press 1 to input data .... \n", time_str);
-            char choice_2 = Input_Choice(0, "", 1);
+            printf("%s -Message- Don't have a DATA, please press \"r\" to return menu main then press 1 to input data .... \n\n", time_str);
+            choice_2 = Input_Choice(0, "", 1);
             if (choice_2 == 'r')
             {
                 system("cls");
+                checkLabel_main = 1;
+                goto label_main;
                 break;
             }
         }
@@ -141,11 +167,14 @@ int main()
             if (choice_2 == 'r')
             {
                 system("cls");
+                checkLabel_main = 1;
+                goto label_main;
                 break;
             }
             else
             {
                 system("cls");
+                goto label_exit;
                 return 0;
             }
             break;
@@ -153,17 +182,58 @@ int main()
 
         break;
         //-->input2<--
+        //-->input3<--
+    case '3':
+        system("cls");
+        if (isHavingData == 0)
+        {
+            printf("%s -Message- Don't have a DATA, please press \"r\" to return menu main then press 1 to input data .... \n\n", time_str);
+            choice_3 = Input_Choice(0, "", 1);
+            if (choice_3 == 'r')
+            {
+                system("cls");
+                checkLabel_main = 1;
+                goto label_main;
+                break;
+            }
+        }
+        else
+        {
+            MENU_3();
+            print_result_multi(n);
+            char choice_3 = Input_Choice(0, notice_er, 1);
+            // return dashboard or exit program.
+            if (choice_3 == 'r')
+            {
+                system("cls");
+                checkLabel_main = 1;
+                goto label_main;
+                break;
+            }
+            else
+            {
+                system("cls");
+                goto label_exit;
+                return 0;
+            }
+            break;
+        }
+
+        break;
+        //-->input3<--
     }
+label_exit:;
 }
 
 // chinh lai ham input choice: them nhap r de return va nhap e de ket thuc...
 
 char Input_Choice(int n, char *notice, int control)
 {
+    printf("\n");
     if (control == 1)
     {
         printf("--Press \"r\" to return the main menu....\n");
-        printf("--Press \"e\" to close program...\n");
+        printf("--Press \"e\" to close program...\n\n");
     }
     int c, d, check = 0;
     do
@@ -199,7 +269,7 @@ char Input_Choice(int n, char *notice, int control)
         }
         printf("%s \n", notice);
     } while (1);
-    printf("--------Input successfully-------");
+    printf("\n");
     return c;
 }
 
@@ -215,7 +285,22 @@ void out(float matrix[100][100], int n)
     }
     printf("\n");
 }
-void sumAndmulti(float matrixA[100][100], float matrixB[100][100], int n)
+void out_console(float matrix[100][100], char name[], int n, int x, int y)
+{
+    gotoxy(x, y);
+    printf("--Matrix %s--", name);
+    gotoxy(x + 2, y + 2);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%6.2lf ", matrix[i][j]);
+        }
+        gotoxy(x + 2, y + 2 + 1 + i);
+    }
+    printf("\n");
+}
+void Matrix_sum(float matrixA[100][100], float matrixB[100][100], int n)
 {
     for (int i = 0; i < n; i++)
     {
@@ -224,6 +309,10 @@ void sumAndmulti(float matrixA[100][100], float matrixB[100][100], int n)
             matrixAns_sum[i][j] = matrixA[i][j] + matrixB[i][j];
         }
     }
+}
+void Matrix_multi(float matrixA[100][100], float matrixB[100][100], int n)
+{
+
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -257,12 +346,12 @@ void replace_multi(float matrix[100][100], int n, int *p, int *q)
     int a, b;
     do
     {
-        printf("Nhap 2 cot can doi (<=%d): ", n);
+        printf("%s -Message- Enter the 2 columns that need to be swapped (<=%d): ", n, time_str);
         scanf("%d %d", p, q);
         a = *p - 1;
         b = *q - 1;
         if (a < 0 || a > n - 1 || b < 0 || b > n - 1)
-            printf("Co cot khong ton tai yeu cau nhap lai. \n\n");
+            printf("%s -Message- Column does not exist, please re-enter \n\n", time_str);
         else
             break;
     } while (1);
@@ -286,6 +375,7 @@ int checkData(FILE *file, float matrixA[100][100], int *n, int *check)
                 return 0;
             }
         }
+
         char a = fgetc(file);
         if (a == ' ')
         {
@@ -422,15 +512,17 @@ void gotoxy(int x, int y) // x,y là tọa điểm x,y trên màn hình
 
 void InputData_keyboard(float matrixA[][100], float matrixB[][100], int *n)
 {
-    printf("Input the level of the matrix: \n");
+    printf("Input the level of the matrix: ");
     scanf("%d", n);
-    printf("Input the matrix A with level %d : ", *n);
+    printf("\n");
+    printf("Input the matrix A with level %d : \n", *n);
     for (int i = 0; i < *n; i++)
     {
         for (int j = 0; j < *n; j++)
         {
-            printf("matrixA[%d][%d]= \n", i + 1, j + 1);
-            scanf("%f", matrixA[i][j]);
+            printf("matrixA[%d][%d]= ", i + 1, j + 1);
+            scanf("%f", &matrixA[i][j]);
+            printf("\n");
         }
     }
     printf("\n");
@@ -440,7 +532,7 @@ void InputData_keyboard(float matrixA[][100], float matrixB[][100], int *n)
         for (int j = 0; j < *n; j++)
         {
             printf("matrixB[%d][%d]= \n", i + 1, j + 1);
-            scanf("%f", matrixB[i][j]);
+            scanf("%f", &matrixB[i][j]);
         }
     }
     printf("\n");
@@ -463,50 +555,42 @@ void MENU_1()
     printf(" ----------------------------------------\n");
     printf(" |    1. Input data from FILE           |\n");
     printf(" |    2. Input data from keyboard       |\n");
-    printf(" |    Press \"r\" to return main menu   |\n");
     printf(" ----------------------------------------\n");
 }
 void MENU_2()
 {
-    printf("%s ---Message--- We have calculated the sum of your 2 matrices.\n", time_str);
+    printf("%s -Message- We have calculated the sum of your 2 matrices.\n", time_str);
     printf("\n");
     printf("Here are your results :");
 }
 void print_result_sum(int n)
 {
-    sumAndmulti(matrixA, matrixB, n);
-    gotoxy(5, 20);
-    printf("--Matrix A-- ");
-    gotoxy(7, 22);
-    out(matrixA, n);
-    gotoxy(50, 20);
-    printf("--Matrix B--");
-    gotoxy(52, 22);
-    out(matrixB, n);
-    gotoxy(5, 22 + n + 4);
+    Matrix_sum(matrixA, matrixB, n);
+    out_console(matrixA, "A", n, 4, 5);
+    out_console(matrixB, "B", n, 30, 5);
+    gotoxy(10, 5 + n + 3);
     printf("--Sum of two matrices--");
-    gotoxy(24, 22 + n + 6);
-    out(matrixAns_sum, n);
+    out_console(matrixAns_sum, "sum", n, 12, 5 + n + 3 + 2);
 }
 void MENU_3()
 {
-    printf(" We have calculated the sum of your 2 matrices.\n");
+    printf("%s -Message- We have calculated the sum of your 2 matrices.\n");
     printf("\n");
     printf("Here are your results :");
 }
 void print_result_multi(int n)
 {
-    sumAndmulti(matrixA, matrixB, n);
-    gotoxy(5, 20);
-    printf("--Matrix A-- ");
-    gotoxy(7, 22);
-    out(matrixA, n);
-    gotoxy(50, 20);
-    printf("--Matrix B--");
-    gotoxy(52, 22);
-    out(matrixB, n);
-    gotoxy(5, 22 + n + 4);
+    Matrix_multi(matrixA, matrixB, n);
+    out_console(matrixA, "A", n, 4, 5);
+    out_console(matrixB, "B", n, 30, 5);
+    gotoxy(10, 5 + n + 3);
     printf("--Product of two matrices--");
-    gotoxy(24, 22 + n + 6);
-    out(matrixAns_multi, n);
+    out_console(matrixAns_multi, "sum", n, 12, 5 + n + 3 + 2);
 }
+// void MENU_4(){}
+// void print_result_permutation(float matrix[][100],int n){
+//     printf("%s ---Message--- We have permutated your 2 matrix.",time_str);
+//     permutation_Matrix(matrix,n);
+//     out_console(matrix,"permutation",n,4,5);
+
+// }
