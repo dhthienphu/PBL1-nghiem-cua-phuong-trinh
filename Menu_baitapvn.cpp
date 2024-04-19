@@ -25,10 +25,12 @@ void MENU_2();
 void print_result_sum(int n);
 void MENU_3();
 void print_result_multi(int n);
+void MENU_4();
 void InputData_keyboard(float matrixA[][100], float matrixB[][100], int *n);
 void gotoxy(int x, int y);
 void out_console(float matrix[100][100], char name[], int n, int x, int y);
 
+void print_result_permutation(float matrix[][100], int n);
 int checkData(FILE *file, float matrixA[100][100], int *n, int *check);
 void out(float matrix[100][100], int n);
 void Matrix_sum(float matrixA[100][100], float matrixB[100][100], int n);
@@ -47,9 +49,13 @@ int main()
 {
     char fileName1[100], fileName2[100], fileName3[100];
     int n, p, q, num_1, num_2, check1 = 1, check2 = 1;
-    char choice_main, choice_1, choice_1_1, choice_1_2, choice_2, choice_3;
+
+    char choice_main, choice_1, choice_1_1, choice_1_2, choice_2, choice_3, choice_4;
+
+    int isData_A, isData_B, isData_sum, isData_multi;
+
     int isHavingData = 0;
-    int checkLabel_main = 0;
+    int checkLabel_main = 0, checkLabel_4 = 0;
     FILE *file1, *file2, *file3;
     // Lấy thời gian hiện tại
     time_t current_time = time(NULL);
@@ -149,7 +155,7 @@ label_main:;
         if (isHavingData == 0)
         {
             printf("%s -Message- Don't have a DATA, please press \"r\" to return menu main then press 1 to input data .... \n\n", time_str);
-            choice_2 = Input_Choice(0, "", 1);
+            choice_2 = Input_Choice(0, notice_er, 1);
             if (choice_2 == 'r')
             {
                 system("cls");
@@ -162,6 +168,7 @@ label_main:;
         {
             MENU_2();
             print_result_sum(n);
+            isData_sum = 1;
             char choice_2 = Input_Choice(0, notice_er, 1);
             // return dashboard or exit program.
             if (choice_2 == 'r')
@@ -188,7 +195,7 @@ label_main:;
         if (isHavingData == 0)
         {
             printf("%s -Message- Don't have a DATA, please press \"r\" to return menu main then press 1 to input data .... \n\n", time_str);
-            choice_3 = Input_Choice(0, "", 1);
+            choice_3 = Input_Choice(0, notice_er, 1);
             if (choice_3 == 'r')
             {
                 system("cls");
@@ -201,6 +208,7 @@ label_main:;
         {
             MENU_3();
             print_result_multi(n);
+            isData_multi = 1;
             char choice_3 = Input_Choice(0, notice_er, 1);
             // return dashboard or exit program.
             if (choice_3 == 'r')
@@ -221,6 +229,207 @@ label_main:;
 
         break;
         //-->input3<--
+        //-->input4<--
+    case '4':
+    label_4:;
+        if (checkLabel_4 == 1)
+        {
+
+            getchar();
+            checkLabel_4 = 0;
+        }
+        system("cls");
+        MENU_4();
+        choice_4 = Input_Choice(4, notice_main, 1);
+
+        // if (choice_4 == 'r')
+        // {
+        //     system("cls");
+        //     checkLabel_main = 1;
+        //     goto label_main;
+        //     break;
+        // }
+        // else
+        // {
+        //     system("cls");
+        //     goto label_exit;
+        //     return 0;
+        // }
+        //-->input4_1<--
+        switch (choice_4)
+        {
+        case '1':
+            if (isHavingData == 0)
+            {
+                system("cls");
+                printf("%s -Message- Don't have a DATA, please press \"r\" to return menu to input again or \"e\" exit .... \n\n", time_str);
+                getchar();
+                char choice_4_1 = Input_Choice(0, notice_er, 0);
+
+                if (choice_4_1 == 'r')
+                {
+                    system("cls");
+                    checkLabel_4 = 1;
+                    goto label_4;
+                }
+                else
+                {
+                    goto label_exit;
+                }
+            }
+            else
+            {
+                system("cls");
+                print_result_permutation(matrixA, n);
+                char choice_4_1 = Input_Choice(0, notice_er, 1);
+                // return dashboard or exit program.
+                if (choice_4_1 == 'r')
+                {
+                    system("cls");
+                    checkLabel_main = 1;
+                    goto label_main;
+                    break;
+                }
+                else
+                {
+                    system("cls");
+                    goto label_exit;
+                    return 0;
+                }
+            }
+            break;
+        case '2':
+            if (isHavingData == 0)
+            {
+                system("cls");
+                printf("%s -Message- Don't have a DATA, please press \"r\" to return menu to input again or \"e\" exit .... \n\n", time_str);
+                getchar();
+                char choice_4_2 = Input_Choice(0, notice_er, 0);
+
+                if (choice_4_2 == 'r')
+                {
+                    system("cls");
+                    checkLabel_4 = 1;
+                    goto label_4;
+                }
+                else
+                {
+                    goto label_exit;
+                }
+            }
+            else
+            {
+                system("cls");
+                print_result_permutation(matrixA, n);
+                char choice_4_2 = Input_Choice(0, notice_er, 1);
+                // return dashboard or exit program.
+                if (choice_4_2 == 'r')
+                {
+                    system("cls");
+                    checkLabel_main = 1;
+                    goto label_main;
+                    break;
+                }
+                else
+                {
+                    system("cls");
+                    goto label_exit;
+                    return 0;
+                }
+            }
+            break;
+        case '3':
+            if (isData_sum == 0)
+            {
+                system("cls");
+                printf("%s -Message- Don't have a DATA, please press \"r\" to return menu to input again another one or return main menu to calculate it .... \n\n", time_str);
+                getchar();
+                char choice_4_3 = Input_Choice(0, notice_er, 0);
+
+                if (choice_4_3 == 'r')
+                {
+                    system("cls");
+                    checkLabel_4 = 1;
+                    goto label_4;
+                }
+                else
+                {
+                    goto label_exit;
+                }
+            }
+            else
+            {
+                system("cls");
+                print_result_permutation(matrixAns_sum, n);
+                getchar();
+                char choice_4_3 = Input_Choice(0, notice_er, 1);
+                // return dashboard or exit program.
+                if (choice_4_3 == 'r')
+                {
+                    system("cls");
+                    checkLabel_main = 1;
+                    goto label_main;
+                    break;
+                }
+                else
+                {
+                    system("cls");
+                    goto label_exit;
+                    return 0;
+                }
+            }
+            break;
+        case '4':
+            if (isData_multi == 0)
+            {
+                system("cls");
+                printf("%s -Message- Don't have a DATA, please press \"r\" to return menu to input again another one or return main menu to calculate it .... \n\n", time_str);
+                getchar();
+                char choice_4_3 = Input_Choice(0, notice_er, 0);
+
+                if (choice_4_3 == 'r')
+                {
+                    system("cls");
+                    checkLabel_4 = 1;
+                    goto label_4;
+                }
+                else
+                {
+                    goto label_exit;
+                }
+            }
+            else
+            {
+                system("cls");
+                print_result_permutation(matrixAns_multi, n);
+                getchar();
+                char choice_4_3 = Input_Choice(0, notice_er, 1);
+                // return dashboard or exit program.
+                if (choice_4_3 == 'r')
+                {
+                    system("cls");
+                    checkLabel_main = 1;
+                    goto label_main;
+                    break;
+                }
+                else
+                {
+                    system("cls");
+                    goto label_exit;
+                    return 0;
+                }
+            }
+            break;
+        case 'r':
+            system("cls");
+            checkLabel_main = 1;
+            goto label_main;
+            break;
+        case 'e':
+            goto label_exit;
+        }
+
+        //-->input4<--
     }
 label_exit:;
 }
@@ -587,10 +796,21 @@ void print_result_multi(int n)
     printf("--Product of two matrices--");
     out_console(matrixAns_multi, "sum", n, 12, 5 + n + 3 + 2);
 }
-// void MENU_4(){}
-// void print_result_permutation(float matrix[][100],int n){
-//     printf("%s ---Message--- We have permutated your 2 matrix.",time_str);
-//     permutation_Matrix(matrix,n);
-//     out_console(matrix,"permutation",n,4,5);
+void MENU_4()
+{
+    printf("Please choose the matrix you want to permutate.\n");
+    printf(" ----------------------------------------------\n");
+    printf("|             1. Matrix A                      |\n");
+    printf("|             2. Matrix B                      |\n");
+    printf("|             3. Matrix Sum                    |\n");
+    printf("|             4. Matrix Multi                  |\n");
+    printf(" ----------------------------------------------\n");
+}
+void print_result_permutation(float matrix[][100], int n)
+{
+    printf("%s ---Message--- We have permutated your matrix.", time_str);
+    out_console(matrix, "before permutated ", n, 4, 3);
 
-// }
+    permutation_Matrix(matrix, n);
+    out_console(matrix, "permutation", n, 4, 10);
+}
