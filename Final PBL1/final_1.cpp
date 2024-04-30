@@ -24,6 +24,12 @@ int getMouseClick_main();
 int getMouseClick_1();
 int getMouseClick_11();
 
+void input_keyboard(double poly[], int *n);
+void readNameFile(char *fileName);
+void readPolyFromFile(FILE *file, char *fileName, double poly[], int *n);
+void readDataFromFile(char *fileName, double poly[], int *n);
+void printPoly(double poly[], int n);
+
 void button_return();
 void button_exit();
 void menu_main();
@@ -32,14 +38,14 @@ void menu_InputData();
 void MENU_INPUT();
 
 void loading_message(char *message);
-void input_keyboard(double poly[], int *n);
 
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
     int n;
     double poly[100];
-    int choice_main, choice_1, choice_11;
+    int choice_main, choice_1, choice_11, choice_12;
+    char fileName[100];
 
 label_dashboard:;
     Dashboard();
@@ -60,8 +66,8 @@ label_dashboard:;
     label_1:;
         system("cls");
         MENU_INPUT();
-        choice_main = getMouseClick_1();
-        if (choice_main == -2)
+        choice_1 = getMouseClick_1();
+        if (choice_1 == -2)
         {
             system("cls");
             goto label_1;
@@ -69,7 +75,7 @@ label_dashboard:;
         x_click = 0;
         y_click = 100;
 
-        switch (choice_main)
+        switch (choice_1)
         {
         // ----> case 11 <------
         case 11:
@@ -78,14 +84,6 @@ label_dashboard:;
             input_keyboard(poly, &n);
             button_exit();
             button_return();
-        // gotoXY(20,20);
-        // printf("Nhap n: ");
-        // scanf("%d", &n);
-        // printf("huhu");
-        // getchar();
-        // gotoXY(30, 8 + n + 6);
-        // printf("huhuhuuhuh");
-        // printf("%d     ",choice_11);
         label_11:;
             choice_11 = getMouseClick_11();
             if (choice_11 == -2)
@@ -109,13 +107,46 @@ label_dashboard:;
             }
 
             break;
+        // ----> case 12 <------
         case 12:
-            printf("coming soon");
+            system("cls");
 
+            readDataFromFile(fileName, poly, &n);
+            button_exit();
+            button_return();
+        label_12:;
+            choice_12 = getMouseClick_11();
+            if (choice_12 == -2)
+            {
+
+                goto label_12;
+            }
+            switch (choice_12)
+            {
+            case 0:
+                system("cls");
+                choice_main = -100;
+                goto label_dashboard;
+                break;
+            case -1:
+                system("cls");
+
+                goto label_exit;
+                break;
+            }
+            break;
+        // ----> case 12 <------
+        // ----> case 13 <------
+        case 13:
+            system("cls");
+            button_exit();
+            button_return();
+            // coming soon random data.
             break;
         }
         break;
         // ----> case 1 <------
+        // ----> case 2 <------
     }
 
 label_exit:;
@@ -161,7 +192,9 @@ COORD processInputEvents()
         // Process each event
         for (i = 0; i < cNumRead; i++)
         {
-            if (irInBuf[i].EventType == MOUSE_EVENT && irInBuf[i].Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED)
+            if (irInBuf[i].EventType == MOUSE_EVENT &&
+                irInBuf[i].Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED &&
+                irInBuf[i].Event.MouseEvent.dwEventFlags == 0) // Check if it's a click event
             {
                 // Remove the event from the buffer
                 INPUT_RECORD dummy;
@@ -175,8 +208,9 @@ COORD processInputEvents()
             }
         }
     }
+    COORD defaultCoord = {100, 100};
+    return defaultCoord;
 }
-
 void getMouseClick()
 {
     click = processInputEvents();
@@ -212,11 +246,11 @@ void gotoXY(int x, int y)
 void button_return()
 {
     gotoXY(1, 0);
-    printf("┌---------┐");
+    printf("┌----------┐");
     gotoXY(1, 0 + 1);
-    printf("| Trở lại |");
+    printf("| Quay lại |");
     gotoXY(1, 0 + 2);
-    printf("└---------┘");
+    printf("└----------┘");
 }
 void button_exit()
 {
@@ -372,6 +406,9 @@ void input_keyboard(double poly[], int *n)
     }
     gotoXY(30, 8 + *n + 2);
     printf("Đã nhập xong đa thức... ");
+    gotoXY(30, 8 + *n + 3);
+    printf("Đa thức của bạn vừa nhập là: ");
+    printPoly(poly, *n);
     gotoXY(30, 8 + *n + 4);
     printf("Nhấn vào nút quay lại để quay lại menu chính....");
 
@@ -380,9 +417,10 @@ void input_keyboard(double poly[], int *n)
 }
 
 int getMouseClick_main()
-{   prev_x=x_click;
-    prev_y=y_click;
-    if(abs(prev_x-x_click)>1 || abs(prev_y-y_click)>1)
+{
+    prev_x = x_click;
+    prev_y = y_click;
+    if (abs(prev_x - x_click) > 1 || abs(prev_y - y_click) > 1)
     {
         return -2;
     }
@@ -434,7 +472,7 @@ int getMouseClick_1()
     return -2;
 }
 int getMouseClick_11()
-{   
+{
     click = processInputEvents();
     ++count_exit;
     x_click = click.X;
@@ -448,4 +486,107 @@ int getMouseClick_11()
         return -1;
     }
     return -2;
+}
+
+void readNameFile(char *fileName)
+{
+    gotoXY(30, 5);
+    printf("Nhập tên file cần đọc: ");
+    fgets(fileName, 100, stdin);
+    // xu ly dau \n khi nhap.
+    int length = strlen(fileName);
+    if (length > 0 && fileName[length - 1] == '\n')
+    {
+        fileName[length - 1] = '\0';
+    }
+    // gotoXY(30, 8);
+    // printf("Đã nhập xong tên file... ");
+    // gotoXY(30, 10);
+    // printf("Nhấn vào nút quay lại để quay lại menu chính....");
+}
+void readPolyFromFile(FILE *file, char *fileName, double poly[], int *n)
+{
+
+    fscanf(file, "%d", n);
+    for (int i = *n; i >= 0; i--)
+    {
+        fscanf(file, "%lf", &poly[i]);
+    }
+    fclose(file);
+}
+void readDataFromFile(char *fileName, double poly[], int *n)
+{
+    int cnt = 0;
+    FILE *file;
+    do
+    {
+        readNameFile(fileName);
+        file = fopen(fileName, "r");
+
+        if (file == NULL)
+        {
+            system("cls");
+            gotoXY(30, 6);
+            printf("Không thể mở file %s, vui lòng nhập lại tên file..... ", fileName);
+            gotoXY(30, 5);
+        }
+        ++cnt;
+    } while (file == NULL);
+    gotoXY(30, 6);
+    printf("Đọc dữ liệu từ file %s thành công... ", fileName);
+    readPolyFromFile(file, fileName, poly, n);
+    gotoXY(30, 8 + cnt + 2);
+    printf("Đã nhập xong đa thức từ %s... ", fileName);
+    // coming soon in đa thức.
+    gotoXY(30, 8 + cnt + 3);
+    printf("Đa thức của bạn là: ");
+    printPoly(poly, *n);
+    gotoXY(30, 8 + cnt + 4);
+    printf("Nhấn vào nút quay lại để quay lại menu chính....");
+}
+
+void printPoly(double poly[], int n)
+{
+    char *superscripts[] = {"⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹","¹⁰","¹¹","¹²","¹³","¹⁴","¹⁵","¹⁶","¹⁷","¹⁸","¹⁹","²⁰"};
+    for (int i = n; i >= 0; i--)
+    {
+        if (i == n)
+        { // Highest degree term
+            printf("%.10gx%s ", poly[i], superscripts[i]);
+        }
+        else if (i == 1)
+        { // x term
+            if (poly[i] > 0)
+            {
+                printf("+ %.10gx ", poly[i]);
+            }
+            else if (poly[i] < 0)
+            {
+                printf("- %.10gx ", -poly[i]);
+            }
+        }
+        else if (i == 0)
+        { // Constant term
+            if (poly[i] > 0)
+            {
+                printf("+ %.10g", poly[i]);
+            }
+            else if (poly[i] < 0)
+            {
+                printf("- %.10g", -poly[i]);
+            }
+        }
+        else
+        { // Other terms
+            if (poly[i] > 0)
+            {
+                printf("+ %.10gx%s ", poly[i], superscripts[i]);
+            }
+            else if (poly[i] < 0)
+            {
+                printf("- %.10gx%s ", -poly[i], superscripts[i]);
+            }
+        }
+    }
+    printf("\n");
 }
