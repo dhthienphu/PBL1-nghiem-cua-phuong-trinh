@@ -11,6 +11,7 @@ COORD CursorPosition;
 COORD click;
 #define eps 0.00001
 
+int nRoots;
 int x_click, y_click;
 int count_exit = 0;
 int prev_x = 0, prev_y = 0;
@@ -26,8 +27,9 @@ int getMouseClick_1();
 int getMouseClick_11();
 void rootRange_suggest(double a[], int n);
 double f(double a[], int n, double x);
-void checkInputRange(double poly[], int n, double *a, double *b);
+void checkInputRange(double poly[], int n, double *a, double *b,int control_method);
 double bisectionMethod(double poly[], int n, double *a, double *b);
+void BowstringMethod(double poly[], int n, double *a, double *b);
 
 void input_keyboard(double poly[], int *n);
 void readNameFile(char *fileName);
@@ -50,7 +52,7 @@ int main()
     int n;
     double a, b;
     double poly[100];
-    int choice_main, choice_1, choice_11, choice_12,choice_3;
+    int choice_main, choice_1, choice_11, choice_12,choice_3,choice_2;
     char fileName[100];
 
 label_dashboard:;
@@ -164,11 +166,18 @@ label_dashboard:;
         // ----> case 3 <------
     case 3:
         system("cls");
-        
-        checkInputRange(poly, n, &a, &b);
-        bisectionMethod(poly, n, &a, &b);
         button_exit();
         button_return();
+        checkInputRange(poly, n, &a, &b,3);
+        if(nRoots==0){
+            button_exit();
+            button_return();
+            gotoXY(30, 8);
+            printf("Nhấn vào nút \"Quay lại\" để quay lại menu chính....");
+        }
+        if(nRoots!=0)
+        bisectionMethod(poly, n, &a, &b);
+        
         label_3:;
         choice_3 = getMouseClick_11();
         if (choice_3 == -2)
@@ -190,6 +199,41 @@ label_dashboard:;
 
     break;
         // ----> case 3 <------
+    // ----> case 2 <------
+    case 2:
+        system("cls");
+        button_exit();
+        button_return();
+        checkInputRange(poly, n, &a, &b,2);
+        if(nRoots==0){
+            button_exit();
+            button_return();
+            gotoXY(30, 8);
+            printf("Nhấn vào nút \"Quay lại\" để quay lại menu chính....");
+        }
+        if(nRoots!=0)
+        BowstringMethod(poly, n, &a, &b);
+        
+        label_2:;
+        choice_2 = getMouseClick_11();
+        if (choice_2 == -2)
+        {
+            goto label_2;
+        }
+        switch (choice_2)
+        {
+        case 0:
+            system("cls");
+            choice_main = -100;
+            goto label_dashboard;
+            break;
+        case -1:
+            system("cls");
+            goto label_exit;
+            break;
+        }
+    break;
+    // ----> case 2 <------
     }
 
 label_exit:;
@@ -445,7 +489,7 @@ int isClick_inputData()
     return -2;
 }
 void input_keyboard(double poly[], int *n)
-{
+{   char *superscripts[] = {"⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "¹⁰", "¹¹", "¹²", "¹³", "¹⁴", "¹⁵", "¹⁶", "¹⁷", "¹⁸", "¹⁹", "²⁰"};
     gotoXY(30, 5);
     printf("Nhập bậc của đa thức cần tính: ");
     scanf("%d", n);
@@ -453,7 +497,7 @@ void input_keyboard(double poly[], int *n)
     for (i = *n; i >= 0; i--)
     {
         gotoXY(30, 8 + *n - i);
-        printf("Nhập hệ số của x^%d: ", i);
+        printf("Nhập hệ số của x%s: ", superscripts[i]);
         scanf("%lf", &poly[i]);
     }
     gotoXY(30, 8 + *n + 2);
@@ -462,7 +506,7 @@ void input_keyboard(double poly[], int *n)
     printf("Đa thức của bạn vừa nhập là: ");
     printPoly(poly, *n);
     gotoXY(30, 8 + *n + 4);
-    printf("Nhấn vào nút quay lại để quay lại menu chính....");
+    printf("Nhấn vào nút \"Quay lại\" để quay lại menu chính....");
 
     //   printf("Đa thức của bạn vừa nhập là: ");
     // coming soon xử lý in đa thức đẹp hơn.
@@ -600,14 +644,14 @@ void readDataFromFile(char *fileName, double poly[], int *n)
     gotoXY(30, 6);
     printf("Đọc dữ liệu từ file %s thành công.................. ", fileName);
     readPolyFromFile(file, fileName, poly, n);
-    gotoXY(30, 8 + cnt + 2);
+    gotoXY(30, 8);
     printf("Đã nhập xong đa thức từ %s... ", fileName);
     // coming soon in đa thức.
-    gotoXY(30, 8 + cnt + 3);
+    gotoXY(30, 8 +1);
     printf("Đa thức của bạn là: ");
     printPoly(poly, *n);
-    gotoXY(30, 8 + cnt + 4);
-    printf("Nhấn vào nút quay lại để quay lại menu chính....");
+    gotoXY(30, 8 + 3 );
+    printf("Nhấn vào nút \"Quay lại\" để quay lại menu chính....");
 }
 void printPoly(double poly[], int n)
 {
@@ -666,18 +710,18 @@ double f(double a[], int n, double x)
 void rootRange_suggest(double a[], int n)
 {
     double firstRange[100];
-    int cnt = 0;
+     nRoots = 0;
     for (double i = -1000; i < 1000; i += 0.1)
     {
         if (f(a, n, i) * f(a, n, i + 0.1) < 0)
         {
-            firstRange[cnt] = i;
-            ++cnt;
+            firstRange[nRoots] = i;
+            ++nRoots;
         }
     }
     double rootRange[100];
     int cntRoot = 0;
-    for (int i = 0; i < cnt; i++)
+    for (int i = 0; i < nRoots; i++)
     {
         rootRange[cntRoot] = firstRange[i] - 1;
         ++cntRoot;
@@ -690,7 +734,10 @@ void rootRange_suggest(double a[], int n)
         ++cntRoot;
     }
     gotoXY(30, 6);
-    printf("Phương trình f(x)=0 có %d nghiệm thực.", cnt);
+    printf("Phương trình f(x)=0 có %d nghiệm thực.", nRoots);
+    if(nRoots==0){
+        return;
+    }
     gotoXY(30, 7);
     printf("Đề xuất khoảng nghiệm là: ");
     for (int i = 0; i < cntRoot; i += 2)
@@ -698,7 +745,7 @@ void rootRange_suggest(double a[], int n)
         printf("(%0.6g,%0.6g)  ", rootRange[i], rootRange[i + 1]);
     }
 }
-void checkInputRange(double poly[], int n, double *a, double *b)
+void checkInputRange(double poly[], int n, double *a, double *b,int control_method)
 {
     double fa, fb;
     // gotoXY(30, 5);
@@ -713,9 +760,17 @@ void checkInputRange(double poly[], int n, double *a, double *b)
         printf("Đa thức f(x) của bạn là: ");
         printPoly(poly, n);
         gotoXY(30, 4);
+         if(control_method==2){   
+             printf("Tìm nghiệm gần đúng của phương trình f(x)=0 trên bằng phương pháp dây cung\n");
+        }
+        else{
         printf("Tìm nghiệm gần đúng của phương trình f(x)=0 trên bằng phương pháp chia đôi\n");
+        }
         rootRange_suggest(poly, n);
-
+        if(nRoots == 0){
+            return;
+        }
+    
         gotoXY(30, 9);
         printf("Nhập khoảng nghiệm [a;b] :\n  ");
         gotoXY(30, 10);
@@ -730,21 +785,24 @@ void checkInputRange(double poly[], int n, double *a, double *b)
         {
             system("cls");
             gotoXY(30, 13);
-            printf("*Vui lòng nhập lại khoảng nghiệm, không tồn tại nghiệm trong đoạn [%lf;%lf]\n", *a, *b);
+            printf("*Vui lòng nhập lại khoảng nghiệm, không tồn tại nghiệm trong đoạn [%0.6g;%0.6g]\n", *a, *b);
         }
+       
 
     } while (f(poly, n, *a) * f(poly, n, *b) > 0);
+     gotoXY(30, 13);
+    printf("                                                                                                   ");
     if (fa * fb == 0)
     {
         if (fa == 0)
         {
             gotoXY(30, 13);
-            printf("Nghiệm của đa thức trong đoạn [%lf;%lf] là : x = %0.6g\n", *a, *b, *a);
+            printf("Nghiệm của đa thức trong đoạn [%0.6g;%0.6g] là : x = %0.6g\n", *a, *b, *a);
         }
         else
         {
             gotoXY(30, 13);
-            printf("Nghiệm của đa thức trong đoạn [%lf;%lf] là : x = %0.6g\n", *a, *b, *b);
+            printf("Nghiệm của đa thức trong đoạn [%0.6g;%0.6g] là : x = %0.6g\n", *a, *b, *b);
         }
     }
 }
@@ -810,4 +868,36 @@ double bisectionMethod(double poly[], int n, double *a, double *b)
             return 0;
         }
     }
+}
+void BowstringMethod(double poly[], int n, double *a, double *b)
+{
+    double res;
+    double a_temp = *a;
+    double b_temp = *b;
+    printf("--------------------------Phương pháp dây cung-----------------------\n");
+    printf("    a         |      b          |      x          |      f(x)        |\n");
+    do
+    {
+
+
+        if (f(poly, n, *a) > 0 && f(poly, n, *b) < 0)
+
+
+        {
+
+
+            int tam = *a;
+            *a = *b;
+            *b = tam;
+        }
+        res = *a - (*b - *a) * f(poly, n, *a) / (f(poly, n, *b) - f(poly, n, *a));
+        printf("    %0.6g    |      %0.6g     |      %0.6g      |      %0.6g     |\n", *a, *b, res, f(poly, n, res));
+        if (f(poly, n, res) < 0)
+            *a = res;
+        else
+            *b = res;
+
+
+    } while (fabs(*a - *b) > eps && f(poly, n, res) > eps);
+    printf("Nghiệm của đa thức trong đoạn [%0.6g; %0.6g] là :  %0.6g\n", a_temp, b_temp, res);
 }
