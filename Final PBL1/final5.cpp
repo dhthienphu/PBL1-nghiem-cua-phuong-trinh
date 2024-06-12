@@ -16,9 +16,9 @@
 // todo: ham day cung bi voi test -20,30 bi in qua.
 // todo: tô màu các text trong chương trình.
 // todo: set màu cho cái bảng in
-// todo: em bé chỉnh lại intro với làm đẹp code.
-// todo: thuy : chinh intro. pending
-//  todo: xử lý cái case nhap trung nghiem mà ghi ra file.
+// todo:  chỉnh lại intro với làm đẹp code.
+// todo: chinh intro. pending
+// todo: xử lý cái case nhap trung nghiem mà ghi ra file.
 #define italic "\e[3m"
 #define off "\e[m"
 // #define blue "\e[38:5:12m"
@@ -39,6 +39,8 @@ HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 COORD CursorPosition;
 COORD click;
 #define eps 0.001
+double smallNumber = 0.0000001;
+int intro_off = 0;
 #define LINE_WIDTH 80
 
 int nRoots;
@@ -99,7 +101,14 @@ void MENU_INPUT();
 void alert_message();
 void loading_message(char *message);
 void INTRO();
-
+double handleZero(double *x)
+{
+    if (fabs(*x) < smallNumber)
+    {
+        return 0.0;
+    }
+    return *x;
+}
 Log createLog(int max_size);
 data createData(double a, double b, double ans);
 void addDataToLog(Log cls, data s, Position p);
@@ -345,6 +354,9 @@ label_dashboard:;
     }
 
 label_exit:;
+    intro_off = 1;
+    system("cls");
+    INTRO();
 }
 VOID WriteError(LPCSTR lpszMessage)
 {
@@ -512,7 +524,7 @@ void menu_InputData()
     gotoXY(x, y + 5);
     printf(purple "║               " orange "╔═════════════════╗" off "              " purple "║\n");
     gotoXY(x, y + 6);
-    printf("║         1     " orange "║ Nhập đa thức từ ║" purple "              ║\n");
+    printf("║               " orange "║ Nhập đa thức từ ║" purple "              ║\n");
     gotoXY(x, y + 7);
     printf("║               " orange "║   bàn phím      ║" purple "              ║\n");
     gotoXY(x, y + 8);
@@ -520,7 +532,7 @@ void menu_InputData()
     gotoXY(x, y + 9);
     printf("║               " purple1 "╔═════════════════╗" purple "              ║\n");
     gotoXY(x, y + 10);
-    printf("║         2     " purple1 "║ Nhập đa thức từ ║" purple "              ║\n");
+    printf("║               " purple1 "║ Nhập đa thức từ ║" purple "              ║\n");
     gotoXY(x, y + 11);
     printf("║               " purple1 "║       file      ║" purple "              ║\n");
     gotoXY(x, y + 12);
@@ -541,13 +553,13 @@ void alert_message()
 {
     int x = 25, y = 5;
     gotoXY(x, y);
-    printf("┌---------------------------------------------------------------┐\n");
+    printf(purple1 "┌---------------------------------------------------------------┐\n");
     gotoXY(x, y + 1);
-    printf("|     Vui lòng nhập đa thức trước khi thực hiện tính toán       |\n");
+    printf("|     " red "Vui lòng nhập đa thức trước khi thực hiện tính toán" purple1 "       |\n");
     gotoXY(x, y + 2);
-    printf("└---------------------------------------------------------------┘\n");
+    printf("└---------------------------------------------------------------┘\n" off);
     gotoXY(x, y + 5);
-    printf("Nhấn vào nút \"Quay lại\" để quay lại menu chính....");
+    printf(green italic "Nhấn vào nút \"Quay lại\" để quay lại menu chính...." off);
 }
 void INTRO()
 { //
@@ -565,7 +577,7 @@ void INTRO()
     gotoXY(x, y + 1);
     printf(blue "║                                                                                       ║\n" off);
     gotoXY(x, y + 2);
-    printf(blue "║             " italic green "     phương pháp CHIA ĐÔI và phương pháp D Y CUNG  " off "                 " blue "      ║\n");
+    printf(blue "║             " italic green "     phương pháp CHIA ĐÔI và phương pháp DÂY CUNG  " off "                 " blue "      ║\n");
     gotoXY(x, y + 3);
     printf(blue "┣────────────────────────────────────┳──────────────────────────────────────────────────┫\n" off);
     gotoXY(x, y + 4);
@@ -594,12 +606,15 @@ void INTRO()
     printf(blue "║                                 " blue "   │ " off " " red "   3. GIẢNG VIÊN HƯỚNG DẪN: ĐỖ THỊ TUYẾT HOA " off " " blue "  ║\n" off);
     gotoXY(x, y + 16);
     printf(blue "╚════════════════════════════════════┻══════════════════════════════════════════════════╝\n" off);
-    gotoXY(x, y + 17);
-    printf(purple "                                                                  ╔----------------╗      \n" off);
-    gotoXY(x, y + 18);
-    printf(purple "                                                                  ║   Tiếp tục...  ║      \n" off);
-    gotoXY(x, y + 19);
-    printf(purple "                                                                  ╚----------------╝      \n" off);
+    if (intro_off == 0)
+    {
+        gotoXY(x, y + 17);
+        printf(purple "                                                                  ╔----------------╗      \n" off);
+        gotoXY(x, y + 18);
+        printf(purple "                                                                  ║   Tiếp tục...  ║      \n" off);
+        gotoXY(x, y + 19);
+        printf(purple "                                                                  ╚----------------╝      \n" off);
+    }
 }
 
 void input_keyboard(double poly[], int *n)
@@ -747,11 +762,11 @@ void readNameFile(char *fileName, int control_method)
     gotoXY(30, 5);
     if (control_method == 0)
     {
-        printf("Nhập tên file cần đọc: ");
+        printf(orange "Nhập tên file cần đọc: " off);
     }
     else
-    {
-        printf("Nhập tên file cần ghi : ");
+    { 
+        printf(orange "Nhập tên file cần ghi : " off);
     }
     fgets(fileName, 100, stdin);
     // xu ly dau \n khi nhap.
@@ -797,23 +812,22 @@ void readDataFromFile(char *fileName, double poly[], int *n)
         if (file == NULL)
         {
             system("cls");
-            gotoXY(30, 6);
-            printf("Không thể mở file %s, vui lòng nhập lại tên file..... ", fileName);
+            gotoXY(30, 7);
+            printf(red italic "*Không thể mở file %s, vui lòng nhập lại tên file..... " off, fileName);
             gotoXY(30, 5);
         }
         ++cnt;
     } while (file == NULL);
-    gotoXY(30, 6);
-    printf("Đọc dữ liệu từ file %s thành công.................. ", fileName);
+    gotoXY(30, 7);
+    printf(green italic "Đọc dữ liệu từ file %s thành công                              " off, fileName);
     readPolyFromFile(file, fileName, poly, n);
-    gotoXY(30, 8);
-    printf("Đã nhập xong đa thức từ %s... ", fileName);
+
     // coming soon in đa thức.
-    gotoXY(30, 8 + 1);
-    printf("Đa thức của bạn là: ");
+    gotoXY(30, 9 + 1);
+    printf(orange "Đa thức của bạn là: " off);
     printPoly(poly, *n);
-    gotoXY(30, 8 + 3);
-    printf("Nhấn vào nút \"Quay lại\" để quay lại menu chính....");
+    gotoXY(30, 8 + 4);
+    printf(green italic "Nhấn vào nút \"Quay lại\" để quay lại menu chính...." off);
 }
 void printPoly(double poly[], int n)
 {
@@ -886,18 +900,20 @@ double f(double a[], int n, double x)
     {
         res = res * x + a[i];
     }
-    return res;
+    return handleZero(&res);
 }
 void rootRange_suggest(double a[], int n)
 {
     double firstRange[100];
     nRoots = 0;
-    for (double i = -10000; i < 10000; i += 0.1)
+    for (double i = -1000; i < 1000; i += 0.1)
     {
-        if (f(a, n, i) * f(a, n, i + 0.1) <= 0)
+        if ((f(a, n, i) * f(a, n, i + 0.1) < 0) || (f(a, n, i) * f(a, n, i + 0.1) == 0))
         {
             firstRange[nRoots] = i;
             ++nRoots;
+            if (f(a, n, i) * f(a, n, i + 0.1) == 0)
+                i += 0.1;
         }
     }
     double rootRange[100];
@@ -918,14 +934,14 @@ void rootRange_suggest(double a[], int n)
 
         ++cntRoot;
     }
-    gotoXY(30, 6);
-    printf("Phương trình f(x)=0 có %d nghiệm thực.", nRoots);
+    gotoXY(30, 7);
+    printf(orange "Phương trình f(x)=0 có " red "%d" orange " nghiệm thực." off, nRoots);
     if (nRoots == 0)
     {
         return;
     }
-    gotoXY(30, 7);
-    printf("Đề xuất khoảng nghiệm là: ");
+    gotoXY(30, 8);
+    printf(orange "Đề xuất các khoảng nghiệm là: " off);
     for (int i = 0; i < cntRoot; i += 2)
     {
         printf("(%0.6g,%0.6g)  ", rootRange[i], rootRange[i + 1]);
@@ -943,16 +959,16 @@ void checkInputRange(double poly[], int n, double *a, double *b, int control_met
     do
     {
         gotoXY(30, 3);
-        printf("Đa thức f(x) của bạn là: ");
+        printf(orange "Đa thức f(x) của bạn là: " off);
         printPoly(poly, n);
-        gotoXY(30, 4);
+        gotoXY(30, 5);
         if (control_method == 2)
         {
-            printf("Tìm nghiệm gần đúng của phương trình f(x)=0 trên bằng phương pháp dây cung\n");
+            printf(purple italic "Tìm nghiệm gần đúng của phương trình f(x)=0 trên bằng phương pháp dây cung\n" off);
         }
         else
         {
-            printf("Tìm nghiệm gần đúng của phương trình f(x)=0 trên bằng phương pháp chia đôi\n");
+            printf(purple italic "Tìm nghiệm gần đúng của phương trình f(x)=0 trên bằng phương pháp chia đôi\n" off);
         }
         rootRange_suggest(poly, n);
         if (nRoots == 0)
@@ -960,13 +976,13 @@ void checkInputRange(double poly[], int n, double *a, double *b, int control_met
             return;
         }
 
-        gotoXY(30, 9);
-        printf("Nhập khoảng nghiệm [a;b] :\n  ");
         gotoXY(30, 10);
-        printf("Nhập a: ");
-        scanf("%lf", a);
+        printf(blue "Nhập khoảng nghiệm [a;b] :\n  " off);
         gotoXY(30, 11);
-        printf("Nhập b: ");
+        printf(blue "Nhập a: " off);
+        scanf("%lf", a);
+        gotoXY(30, 12);
+        printf(blue "Nhập b: " off);
         scanf("%lf", b);
         fa = f(poly, n, *a);
         fb = f(poly, n, *b);
@@ -975,24 +991,24 @@ void checkInputRange(double poly[], int n, double *a, double *b, int control_met
             system("cls");
             button_exit();
             button_return();
-            gotoXY(30, 13);
-            printf("*Vui lòng nhập lại khoảng nghiệm, không tồn tại nghiệm trong đoạn [%0.6g;%0.6g]\n", *a, *b);
+            gotoXY(30, 14);
+            printf(red italic "*Vui lòng nhập lại khoảng nghiệm, không tồn tại nghiệm trong đoạn [%0.6g;%0.6g]\n" off, *a, *b);
         }
 
     } while (f(poly, n, *a) * f(poly, n, *b) > 0);
-    gotoXY(30, 13);
+    gotoXY(30, 14);
     printf("                                                                                                   ");
     if (fa * fb == 0)
     {
         if (fa == 0)
         {
             gotoXY(30, 13);
-            printf("Nghiệm của đa thức trong đoạn [%0.6g;%0.6g] là : x = %0.6g\n", *a, *b, *a);
+            printf(green "Nghiệm của đa thức trong đoạn [%0.6g;%0.6g] là : x = %0.6g\n" off, *a, *b, *a);
         }
         else
         {
             gotoXY(30, 13);
-            printf("Nghiệm của đa thức trong đoạn [%0.6g;%0.6g] là : x = %0.6g\n", *a, *b, *b);
+            printf(green "Nghiệm của đa thức trong đoạn [%0.6g;%0.6g] là : x = %0.6g\n" off, *a, *b, *b);
         }
     }
 }
@@ -1016,11 +1032,11 @@ double bisectionMethod(double poly[], int n, double *a, double *b)
         *a = *b;
         *b = tmp;
     }
-    printf(" %-40s\n", "                                            Phương pháp chia đôi");
+    printf(" %-40s\n", red "                                         Phương pháp chia đôi" off);
 
-    printf("%-18s%-40s", " ", "╔═══════════════╦════════════════════╦═════════════════════════╦════════════════════╗\n");
-    printf("%-18s║%-15s║%-20s║%-25s║%-20s║\n", " ", "       a", "          b", "        c=(a+b)/2", "        f(c)");
-    printf("%-18s%-40s\n", " ", "╠═══════════════╬════════════════════╬═════════════════════════╬════════════════════╣");
+    printf("%-18s%-40s", " ", purple "╔═══════════════╦════════════════════╦═════════════════════════╦════════════════════╗\n" off);
+    printf(purple "%-18s║" off orange "%-15s" purple "║" orange "%-20s" purple "║" orange "%-25s" purple "║" orange "%-20s" purple "║" off "\n", " ", "       a", "          b", "        c=(a+b)/2", "        f(c)");
+    printf(purple "%-18s%-40s\n" off, " ", "╠═══════════════╬════════════════════╬═════════════════════════╬════════════════════╣");
     if (f(poly, n, *a) > 0 && f(poly, n, *b) < 0)
     {
         double swap_tmp = *a;
@@ -1038,9 +1054,12 @@ double bisectionMethod(double poly[], int n, double *a, double *b)
             final_b = c;
         if ((fabs(final_a - final_b) <= eps) || (f(poly, n, c) == 0))
         {
-            printf("%-18s%-40s\n", " ", "║───────────────║────────────────────║─────────────────────────║────────────────────║");
+
+            printf(purple "%-18s%-40s\n" off, " ", "║───────────────║────────────────────║─────────────────────────║────────────────────║");
+            printf(purple "%-18s║" green "%5s%-7.4g%-3s" purple "║" green "%-7s%-7.4g%-6s" purple "║" green "%-10s%-7.4g%-8s" purple "║" green "%-5s%-10.4g%-5s" purple "║" off "\n", " ", " ", *a, " ", " ", *b, " ", " ", c, " ", " ", f(poly, n, c), " ");
         }
-        printf("%-18s║%5s%-7.4g%-3s║%-7s%-7.4g%-6s║%-10s%-7.4g%-8s║%-5s%10.4g%-5s║\n", " ", " ", *a, " ", " ", *b, " ", " ", c, " ", " ", f(poly, n, c), " ");
+        else
+            printf(purple "%-18s║" red "%5s%-7.4g%-3s" purple "║" red "%-7s%-7.4g%-6s" purple "║" red "%-10s%-7.4g%-8s" purple "║" red "%-5s%-10.4g%-5s" purple "║" off "\n", " ", " ", *a, " ", " ", *b, " ", " ", c, " ", " ", f(poly, n, c), " ");
 
         if (f(poly, n, c) > 0)
         {
@@ -1051,9 +1070,9 @@ double bisectionMethod(double poly[], int n, double *a, double *b)
 
         if (f(poly, n, c) == 0)
         {
-            printf("%-18s%-40s", " ", "╚═══════════════════════════════════════════════════════════════════════════════════╝\n\n");
+            printf(purple "%-18s%-40s" off, " ", "╚═══════════════╩════════════════════╩═════════════════════════╩════════════════════╝\n\n");
 
-            printf("Nghiệm của đa thức trong đoạn [%.6g;%.6g] là : x = %0.4g\n", a_tmp, b_tmp, c);
+            printf(orange "          Nghiệm của đa thức trong đoạn [%.6g;%.6g] là :" green " x = %0.4g\n" off, a_tmp, b_tmp, c);
             s = createData(a_tmp, b_tmp, c);
             addDataToLog(logAns_bisec, s, logAns_bisec->count);
             result_file_3 = c;
@@ -1061,9 +1080,9 @@ double bisectionMethod(double poly[], int n, double *a, double *b)
         }
         if (fabs(*a - *b) <= eps)
         {
-            printf("%-18s%-40s", " ", "╚═══════════════════════════════════════════════════════════════════════════════════╝\n\n");
+            printf(purple "%-18s%-40s" off, " ", "╚═══════════════╩════════════════════╩═════════════════════════╩════════════════════╝\n\n");
 
-            printf("Nghiệm của đa thức trong đoạn [%.6g;%.6g] là : x = %0.4g\n", a_tmp, b_tmp, *a);
+            printf(orange "          Nghiệm của đa thức trong đoạn [%.6g;%.6g] là :" green " x = %0.4g\n" off, a_tmp, b_tmp, *a);
             s = createData(a_tmp, b_tmp, *a);
             addDataToLog(logAns_bisec, s, logAns_bisec->count);
             result_file_3 = *a;
@@ -1077,30 +1096,42 @@ void BowstringMethod(double poly[], int n, double *a, double *b)
 {
     data s;
     process_bows = 1;
-
+    double final_a, final_b;
     double res;
     double a_temp = *a;
     double b_temp = *b;
-     if (f(poly, n, *a) * f(poly, n, *b) == 0)
+    if (f(poly, n, *a) * f(poly, n, *b) == 0)
     {
-        return ;
+        return;
     }
-    printf(" %-40s\n", "                                     Phương pháp dây cung");
+    printf(red " %-40s\n" off, "                                     Phương pháp dây cung");
 
-    printf("%-18s%-40s", " ", "╔═══════════════╦════════════════════╦═════════════════════════╦════════════════════╗\n");
-    printf("%-18s║%-15s║%-20s║%-25s║%-20s║\n", " ", "       a", "          b", "             x", "        f(x)");
-    printf("%-18s%-40s\n", " ", "╠═══════════════╬════════════════════╬═════════════════════════╬════════════════════╣");
+    printf("%-18s%-40s", " ", purple "╔═══════════════╦════════════════════╦═════════════════════════╦════════════════════╗\n" off);
+    printf(purple "%-18s║" off orange "%-15s" purple "║" orange "%-20s" purple "║" orange "%-25s" purple "║" orange "%-20s" purple "║" off "\n", " ", "       a", "          b", "           x", "        f(x)");
+    printf(purple "%-18s%-40s\n" off, " ", "╠═══════════════╬════════════════════╬═════════════════════════╬════════════════════╣");
+
     res = *a - (*b - *a) * f(poly, n, *a) / (f(poly, n, *b) - f(poly, n, *a));
     // printf("    %0.6g    |      %0.6g     |      %0.6g      |      %0.6g     |\n", *a, *b, res, f(poly, n, res));
-    printf("%-18s║%-4s%-7.4g%-4s║%-7s%-7.4g%-6s║%-10s%-7.4g%-8s║%-7s%-10.4g%-3s║\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+    printf(purple "%-18s║" red "%5s%-7.4g%-3s" purple "║" red "%-7s%-7.4g%-6s" purple "║" red "%-10s%-7.4g%-8s" purple "║" red "%-5s%-10.4g%-5s" purple "║" off "\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+    // printf("%-18s║%-4s%-7.4g%-4s║%-7s%-7.4g%-6s║%-10s%-7.4g%-8s║%-5s%-10.4g%-5s║\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
 
     if (f(poly, n, res) * f(poly, n, *a) < 0)
     {
         do
         {
+
             *b = res;
+            final_a = *a;
+            final_b = *b;
             res = *a - (*b - *a) * f(poly, n, *a) / (f(poly, n, *b) - f(poly, n, *a));
-            printf("%-18s║%-4s%-7.4g%-4s║%-7s%-7.4g%-6s║%-10s%-7.4g%-8s║%-5s%-10.4g%-5s║\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+            if ((fabs(final_b - res) > eps || fabs(f(poly, n, res)) > eps) == 0)
+            {
+                printf(purple "%-18s%-40s\n" off, " ", "║───────────────║────────────────────║─────────────────────────║────────────────────║");
+                printf(purple "%-18s║" green "%5s%-7.4g%-3s" purple "║" green "%-7s%-7.4g%-6s" purple "║" green "%-10s%-7.4g%-8s" purple "║" green "%-5s%-10.4g%-5s" purple "║" off "\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+            }
+            else
+                // printf("%-18s║%-4s%-7.4g%-4s║%-7s%-7.4g%-6s║%-10s%-7.4g%-8s║%-5s%-10.4g%-5s║\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+                printf(purple "%-18s║" red "%5s%-7.4g%-3s" purple "║" red "%-7s%-7.4g%-6s" purple "║" red "%-10s%-7.4g%-8s" purple "║" red "%-5s%-10.4g%-5s" purple "║" off "\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
 
         } while (fabs(*b - res) > eps || fabs(f(poly, n, res)) > eps);
     }
@@ -1110,15 +1141,28 @@ void BowstringMethod(double poly[], int n, double *a, double *b)
         {
             do
             {
+
                 *a = res;
+                final_a = *a;
+                final_b = *b;
                 res = *a - (*b - *a) * f(poly, n, *a) / (f(poly, n, *b) - f(poly, n, *a));
-                printf("%-18s║%-4s%-7.4g%-4s║%-7s%-7.4g%-6s║%-10s%-7.4g%-8s║%-5s%-10.4g%-5s║\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+                if ((fabs(final_a - res) > eps || fabs(f(poly, n, res)) > eps) == 0)
+                {
+                    printf(purple "%-18s%-40s\n" off, " ", "║───────────────║────────────────────║─────────────────────────║────────────────────║");
+                    printf(purple "%-18s║" green "%5s%-7.4g%-3s" purple "║" green "%-7s%-7.4g%-6s" purple "║" green "%-10s%-7.4g%-8s" purple "║" green "%-5s%-10.4g%-5s" purple "║" off "\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+                }
+                else
+                    // printf("%-18s║%-4s%-7.4g%-4s║%-7s%-7.4g%-6s║%-10s%-7.4g%-8s║%-5s%-10.4g%-5s║\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
+                    printf(purple "%-18s║" red "%5s%-7.4g%-3s" purple "║" red "%-7s%-7.4g%-6s" purple "║" red "%-10s%-7.4g%-8s" purple "║" red "%-5s%-10.4g%-5s" purple "║" off "\n", " ", " ", *a, " ", " ", *b, " ", " ", res, " ", " ", f(poly, n, res), " ");
 
             } while (fabs(*a - res) > eps || fabs(f(poly, n, res)) > eps);
         }
     }
-    printf("%-18s%-40s", " ", "╚═══════════════════════════════════════════════════════════════════════════════════╝\n\n");
-    printf("Nghiệm của đa thức trong đoạn [%0.6g; %0.6g] là : x= %0.4g\n", a_temp, b_temp, res);
+
+    printf(purple "%-18s%-40s" off, " ", "╚═══════════════╩════════════════════╩═════════════════════════╩════════════════════╝\n\n");
+
+    // printf("          Nghiệm của đa thức trong đoạn [%0.6g; %0.6g] là : x= %0.4g\n", a_temp, b_temp, res);
+    printf(orange "          Nghiệm của đa thức trong đoạn [%.6g;%.6g] là :" green " x = %0.4g\n" off, a_temp, b_temp, res);
     s = createData(a_temp, b_temp, res);
     addDataToLog(logAns_bows, s, logAns_bows->count);
     result_file_2 = res;
@@ -1244,9 +1288,15 @@ void writeDataToFile(char fileName_1[], int n, double poly[])
     if (logAns_bows->count == 0 && logAns_bisec->count == 0)
     {
         gotoXY(x + 20, y + 3);
-        printf("Không có dữ liệu để ghi vào file");
+        // printf("Không có dữ liệu để ghi vào file");
+        printf(purple1 "┌---------------------------------------------------------------┐\n");
+        gotoXY(x + 20, y + 4);
+        printf("|               " red "Không có dữ liệu để ghi vào File" purple1 "                |\n");
         gotoXY(x + 20, y + 5);
-        printf("Nhấn vào nút \"Quay lại\" để quay lại menu chính....");
+        printf("└---------------------------------------------------------------┘\n" off);
+        gotoXY(x + 20, y + 7);
+
+        printf(green italic "Nhấn vào nút \"Quay lại\" để quay lại menu chính...." off);
         return;
     }
     FILE *file;
@@ -1262,7 +1312,7 @@ void writeDataToFile(char fileName_1[], int n, double poly[])
     writeAtPosition(file, 20, 0, "Giải phương trình:  ");
     printPolyToFile(file, poly, n);
     gotoXY(30, 9);
-    printf("Đã ghi vào file %s", fileName_1);
+    printf(green italic "Đã ghi vào file %s" off, fileName_1);
 
     if (logAns_bisec->count > 0)
     {
